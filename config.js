@@ -1,11 +1,11 @@
 {
-    "pet_path": "pets/naruto",
     "timer": [
-        [ "drink water and rest eyes", 40 ],
-        [ "stand up", 90 ]
+        [ 40, "该喝水休息眼睛了"],
+        [ 90, "该站一会了"]
     ],
     "plan": [
-        [ "book time", 12.0 ],
-        [ "book time", 18.0 ]
+        [ 0, 12.5, "午睡时间到"],
+        [ 0, 13.5, "咖啡时间"],
+        [ 1, 17, "今晚有组会"]
     ]
 }
