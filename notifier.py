@@ -10,7 +10,7 @@ import datetime
 import threading
 
 
-CONFIG = 'config.js'
+CONFIG = 'config.json'
 ICON = "icon/icon.ico"
 TITLE = "提醒小助手"
 
