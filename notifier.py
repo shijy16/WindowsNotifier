@@ -40,7 +40,9 @@ class TimerThread(threading.Thread):
                     duration=30)
         while toaster.notification_active(): time.sleep(0.1)
 
-    def build_timetable(self):
+    def build_timetable(self, configs=None):
+        if configs:
+            self.configs = configs
         self.timetable = []
         cur_time = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
 
@@ -70,11 +72,13 @@ class TimerThread(threading.Thread):
 
 class MyTaskBarIcon(wx.adv.TaskBarIcon):
     ID_EXIT = wx.NewId()
+    ID_UPDATE = wx.NewId()
 
     def __init__(self):
         wx.adv.TaskBarIcon.__init__(self)
         self.SetIcon(wx.Icon(ICON), TITLE)
         self.Bind(wx.EVT_MENU, self.onExit, id=self.ID_EXIT)
+        self.Bind(wx.EVT_MENU, self.onUpdate, id=self.ID_UPDATE)
         self.read_configs()
         self.timer = TimerThread(self, self.configs)
         self.timer.start()
@@ -83,6 +87,10 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
         wx.Exit()
         sys.exit()
 
+    def onUpdate(self, event):
+        self.read_configs()
+        self.timer.build_timetable(self.configs)
+
     def CreatePopupMenu(self):
         menu = wx.Menu()
         for mentAttr in self.getMenuAttrs():
@@ -90,7 +98,10 @@ class MyTaskBarIcon(wx.adv.TaskBarIcon):
         return menu
 
     def getMenuAttrs(self):
-        return [('退出', self.ID_EXIT)]
+        return [ \
+                ('更新配置文件', self.ID_UPDATE), \
+                ('退出', self.ID_EXIT) \
+                ]
 
     def read_configs(self):
         with open(CONFIG, 'r', encoding='utf8') as f:
