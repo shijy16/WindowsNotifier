@@ -26,6 +26,8 @@ class TimerThread(threading.Thread):
         sleep_t = 60
         while(True):
             time.sleep(sleep_t)
+            if(datetime.datetime.now().hour == 0 and datetime.datetime.now().minute == 0):
+                self.build_timetable()
             cur_time = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
             weekday = datetime.datetime.weekday(datetime.datetime.now()) + 1
             for t in self.timetable:
@@ -47,16 +49,26 @@ class TimerThread(threading.Thread):
         cur_time = datetime.datetime.now().hour * 60 + datetime.datetime.now().minute
 
         for timer in self.configs['timer']:
-            interval = int(timer[0])
-            msg = timer[1]
+            i = 0
+            t = cur_time
+            while(t < 24 * 60):
+                while(i < len(timer)):
+                    interval = int(timer[i])
+                    msg = timer[i + 1]
+                    t += interval
+                    self.timetable.append([0, t, msg])
+                    i += 2
+                i = 0
+            i = len(timer) - 1
             t = cur_time
             while(t > 0):
-                self.timetable.append([0, t, msg])
-                t -= interval
-            t = cur_time + interval
-            while(t < 24 * 60):
-                self.timetable.append([0, int(t), msg])
-                t += interval
+                while(i >= 0):
+                    interval = int(timer[i - 1])
+                    msg = timer[i]
+                    self.timetable.append([0, t, msg])
+                    t -= interval
+                    i -= 2
+                i = len(timer) - 1
 
         for plan in self.configs['plan']:
             self.timetable.append([plan[0], int(float(plan[1])*60), plan[2]])
