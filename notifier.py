@@ -22,6 +22,7 @@ class TimerThread(threading.Thread):
         self.configs = configs
 
     def run(self):
+        self.show_notify("小助手开始运行")
         self.build_timetable()
         sleep_t = 60
         while(True):
@@ -74,7 +75,7 @@ class TimerThread(threading.Thread):
             self.timetable.append([plan[0], int(float(plan[1])*60), plan[2]])
 
         self.timetable.sort(key = lambda x : (x[1]))
-        
+        self.show_notify("配置文件已更新")
         # with open('timetable.txt', 'w', encoding='utf8') as f:
         #     for t in self.timetable:
         #         line = "{} {}:{} {}\n".format( t[0], \
